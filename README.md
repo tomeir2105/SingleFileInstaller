@@ -6,10 +6,10 @@ The workflow is split into two phases: **package acquisition (online)** and **de
 ## Scripts Overview
 
 - **online_docker_download.sh**  
-  Fetches all required Docker installation packages from the internet and stores them locally for later transfer to an isolated environment.
+  Downloads all required Docker installation packages from the internet and stores them locally for later transfer to an isolated environment.
 
 - **online_jenkins_download.sh**  
-  Fetches all required Jenkins installation packages from the internet and stores them locally for later transfer to an isolated environment.
+  Downloads all required Jenkins installation packages from the internet and stores them locally for later transfer to an isolated environment.
 
 - **offline_docker_install.sh**  
   Installs Docker using the pre-downloaded packages in an environment without internet access.
@@ -29,17 +29,25 @@ chmod +x online_jenkins_download.sh
 
 After execution, the Docker and Jenkins installation packages will be stored locally in the current directory.
 
-### 2. Transfer Packages to Offline Environment
-Copy the downloaded package files from the online environment to the target offline environment.  
-You can use **USB drives, secure copy (scp)** over a controlled network, or other secure media.
+### 2. Create an Archive for Transfer
+To move the packages to the offline environment, bundle them into a `.tar.gz` archive:
 
-Example using `scp`:
 ```bash
-scp *.deb user@offline-server:/path/to/packages/
+tar -czvf docker_jenkins_packages.tar.gz *.deb
 ```
 
-### 3. Deployment (Offline Environment)
-Once the packages are present in the offline environment, execute the Docker installation script:
+Transfer the `docker_jenkins_packages.tar.gz` file to the offline environment using USB storage or other secure removable media.
+
+### 3. Extract Packages in the Offline Environment
+On the offline environment, place the archive in a working directory and extract it:
+
+```bash
+tar -xzvf docker_jenkins_packages.tar.gz -C /path/to/target_directory
+cd /path/to/target_directory
+```
+
+### 4. Deployment (Offline Environment)
+Once the packages are extracted in the offline environment, execute the Docker installation script:
 
 ```bash
 chmod +x offline_docker_install.sh
